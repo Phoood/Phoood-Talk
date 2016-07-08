@@ -26,7 +26,7 @@ public class LoginActivity extends AppCompatActivity {
      */
     @Deprecated
     public final void tempLogin(View view) {
-        Intent intent = new Intent(this, HomeActivity.class);
+        Intent intent = new Intent(this, ChatActivity.class);
         startActivity(intent);
         finish();
     }
