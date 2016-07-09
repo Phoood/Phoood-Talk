@@ -14,7 +14,7 @@ public class Message {
     private Location mLocation;
     private Account mSender;
     private Time mTimeSent;
-
+    private int mId;
     private Object mContents;
 
     public Location getLocation() {
@@ -47,5 +47,13 @@ public class Message {
 
     public void setContents(Object contents) {
         mContents = contents;
+    }
+
+    public int getId() {
+        return mId;
+    }
+
+    public void setId(int id) {
+        mId = id;
     }
 }
