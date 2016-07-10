@@ -23,6 +23,14 @@
         android:layout_alignParentLeft="true"
         android:orientation="vertical">
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/cam_button"
+            android:text="Cam"
+            android:layout_alignBottom="@+id/chat"
+            android:layout_alignParentLeft="true"
+            android:onClick="takePicture" />
 
         <EditText
             android:layout_width="wrap_content"
@@ -31,9 +39,8 @@
             android:ems="10"
             android:id="@+id/chat"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
             android:layout_toLeftOf="@+id/send_button"
-            />
+            android:layout_toRightOf="@+id/cam_button" />
 
         <Button
             android:layout_width="wrap_content"
