@@ -26,12 +26,12 @@
         android:textSize="24sp"
         android:padding="24dp"/>
 
-    <Button
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/login_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tap To Login"
-        android:textSize="32dp"
-        android:padding="24dp"
-        android:onClick="tempLogin"/>
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp" />
 
 </LinearLayout>

@@ -10,6 +10,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.phooodstudio.phooodtalk.R;
 
 /**
@@ -17,6 +22,9 @@ import com.phooodstudio.phooodtalk.R;
  * This is the first activity that will run
  */
 public class LoginActivity extends AppCompatActivity {
+
+    private LoginButton mLoginButton;
+    private CallbackManager mCallbackManager;
 
     private static final int PERMISSION_REQUEST_READ_EXT_STORAGE = 1;
     private static final int PERMISSION_REQUEST_INTERNET = 2;
@@ -27,12 +35,34 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        //UI Elements
+        mLoginButton = (LoginButton) findViewById(R.id.login_button);
+        mLoginButton.setReadPermissions("email");
+        // Callback registration
+        mCallbackManager = CallbackManager.Factory.create();
+        mLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+
+            }
+
+            @Override
+            public void onCancel() {
+                // App code
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                // App code
+            }
+        });
+
         //Permissions
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
 
             ActivityCompat.requestPermissions(this,
-                    new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                     PERMISSION_REQUEST_READ_EXT_STORAGE);
         } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -49,17 +79,6 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * This is a temporary login method.
-     * Only use for debugging.
-     * @param view - view that activated this
-     */
-    @Deprecated
-    public final void tempLogin(View view) {
-        Intent intent = new Intent(this, ChatActivity.class);
-        startActivity(intent);
-        finish();
-    }
 
     /**
      * When permissions are granted, run the following lines of code
@@ -100,5 +119,18 @@ public class LoginActivity extends AppCompatActivity {
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
+    }
+
+    /**
+     * Processes results from activity
+     * For LoginActivity, this is just processing the result of Facebook login
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 }

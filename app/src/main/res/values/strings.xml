@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Phoood Talk</string>
     <string name="facebook_app_id">483540328511047</string>
+    <string name="fb_login_protocol_scheme">fb483540328511047</string>
 </resources>
