@@ -19,6 +19,7 @@ public class HomeActivity extends AppCompatActivity{
     //Variables
     //    private SlidingTabLayout mTabs;
     private CharSequence mTitles[] = {"Home", "Journal", "Friends"};
+    private static final String TAG = "HomeActivity";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
