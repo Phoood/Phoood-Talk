@@ -10,13 +10,13 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -37,8 +37,8 @@ public class LoginActivity extends AppCompatActivity {
     private LoginButton mLoginButton;
     private CallbackManager mCallbackManager;
     private Context mContext;
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseAuth.AuthStateListener mFirebaseAuthListener;
 
     private static final int PERMISSION_REQUEST_READ_EXT_STORAGE = 1;
     private static final int PERMISSION_REQUEST_INTERNET = 2;
@@ -63,28 +63,39 @@ public class LoginActivity extends AppCompatActivity {
              */
             @Override
             public void onSuccess(LoginResult loginResult) {
-                Log.i(TAG, "Connected to Facebook");
-                handleFacebookAccessToken(loginResult.getAccessToken());
-                Intent homeIntent = new Intent(mContext, HomeActivity.class);
-                startActivity(homeIntent);
+                facebookCallbackOnSuccess(loginResult);
             }
 
             @Override
             public void onCancel() {
-                Log.i(TAG, "Canceled connection to Facebook");
-                //TODO: add cancel code, refuse app
+                facebookCallbackOnCancel();
             }
 
             @Override
             public void onError(FacebookException exception) {
-                Log.e(TAG, "Error connecting to Facebook");
-                //TODO; add error code, retry then fail
+                facebookCallbackOnError(exception);
+            }
+        });
+        LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                facebookCallbackOnSuccess(loginResult);
+            }
+
+            @Override
+            public void onCancel() {
+                facebookCallbackOnCancel();
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                facebookCallbackOnError(error);
             }
         });
 
         //Authentication
-        mAuth = FirebaseAuth.getInstance();
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
@@ -124,14 +135,14 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
+        mFirebaseAuth.addAuthStateListener(mFirebaseAuthListener);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
+        if (mFirebaseAuthListener != null) {
+            mFirebaseAuth.removeAuthStateListener(mFirebaseAuthListener);
         }
     }
 
@@ -174,7 +185,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
     }
 
     /**
@@ -193,14 +203,14 @@ public class LoginActivity extends AppCompatActivity {
 
     /**
      * This method is responsible for linking the Firebase account with the Facebook Account
-     * @param token
+     * @param token - grants access to the linked Firebase account
      */
     private void handleFacebookAccessToken(AccessToken token) {
         Log.d(TAG, "handleFacebookAccessToken:" + token);
 
         //Receive and sign in with credential from facebook.
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        mAuth.signInWithCredential(credential)
+        mFirebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -218,4 +228,23 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
     }
+
+
+    private void facebookCallbackOnSuccess(LoginResult loginResult){
+        Log.i(TAG, "Connected to Facebook");
+        handleFacebookAccessToken(loginResult.getAccessToken());
+        Intent homeIntent = new Intent(mContext, HomeActivity.class);
+        startActivity(homeIntent);
+    }
+
+    private void facebookCallbackOnCancel(){
+        Log.i(TAG, "Canceled connection to Facebook");
+
+    }
+
+    private void facebookCallbackOnError(FacebookException exception){
+        Log.e(TAG, "Error connecting to Facebook");
+
+    }
+
 }
