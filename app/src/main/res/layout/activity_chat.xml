@@ -15,41 +15,50 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="80dp" />
 
-    <RelativeLayout
-        android:id="@+id/form"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
         android:orientation="vertical">
+
+
+        <RelativeLayout
+            android:id="@+id/form"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_alignParentLeft="true"
+            >
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:ems="10"
+                android:id="@+id/chat"
+
+                android:layout_toLeftOf="@+id/send_button"
+                />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Send"
+                android:id="@+id/send_button"
+                android:layout_alignBottom="@+id/chat"
+                android:layout_alignParentRight="true"
+                android:onClick="sendMessage"
+                />
+        </RelativeLayout>
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/cam_button"
-            android:text="Cam"
-            android:layout_alignBottom="@+id/chat"
             android:layout_alignParentLeft="true"
-            android:onClick="takePicture" />
+            android:onClick="takePicture"
+            android:background="@android:drawable/ic_menu_camera" />
 
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="textMultiLine"
-            android:ems="10"
-            android:id="@+id/chat"
-            android:layout_alignParentBottom="true"
-            android:layout_toLeftOf="@+id/send_button"
-            android:layout_toRightOf="@+id/cam_button" />
+    </LinearLayout>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Send"
-            android:id="@+id/send_button"
-            android:layout_alignBottom="@+id/chat"
-            android:layout_alignParentRight="true"
-            android:onClick="sendMessage"
-            />
-    </RelativeLayout>
+
 </RelativeLayout>
