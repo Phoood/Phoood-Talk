@@ -28,6 +28,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.phooodstudio.phooodtalk.R;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Login Activity
  * This is the first activity that will run
@@ -40,10 +44,20 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mFirebaseAuthListener;
 
+    private static List<String> FACEBOOK_PERMISSIONS =
+            new ArrayList<>();
+
     private static final int PERMISSION_REQUEST_READ_EXT_STORAGE = 1;
     private static final int PERMISSION_REQUEST_INTERNET = 2;
     private static final int PERMISSION_REQUEST_WRITE_EXT_STORAGE = 3;
     private static final String TAG = "LoginActivity";
+
+    public LoginActivity(){
+        super();
+
+        FACEBOOK_PERMISSIONS.add("email");
+        FACEBOOK_PERMISSIONS.add("public_profile");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +67,7 @@ public class LoginActivity extends AppCompatActivity {
 
         //UI Elements
         mLoginButton = (LoginButton) findViewById(R.id.login_button);
-        mLoginButton.setReadPermissions("email", "public_profile");
+        mLoginButton.setReadPermissions(FACEBOOK_PERMISSIONS);
         // Callback registration
         mCallbackManager = CallbackManager.Factory.create();
         mLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
@@ -136,6 +150,9 @@ public class LoginActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         mFirebaseAuth.addAuthStateListener(mFirebaseAuthListener);
+
+        //Run login
+        LoginManager.getInstance().logInWithReadPermissions(this, FACEBOOK_PERMISSIONS);
     }
 
     @Override
