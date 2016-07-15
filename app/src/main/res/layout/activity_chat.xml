@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingBottom="@dimen/activity_vertical_margin"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                tools:context="com.phooodstudio.phooodtalk.presentation.ChatActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.phooodstudio.phooodtalk.presentation.ChatActivity">
 
     <ListView
         android:id="@+id/chat_messages"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="80dp" />
+        android:layout_marginBottom="100dp" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -50,13 +50,33 @@
                 />
         </RelativeLayout>
 
-        <Button
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/cam_button"
-            android:layout_alignParentLeft="true"
-            android:onClick="takePicture"
-            android:background="@android:drawable/ic_menu_camera" />
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/cam_button"
+                android:layout_alignParentLeft="true"
+                android:onClick="takePicture"
+                android:src="@android:drawable/ic_menu_camera"
+                />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/image_button"
+                android:src="@android:drawable/ic_menu_gallery" />
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/emoji_button"
+                android:src="@android:drawable/"
+                />
+
+        </LinearLayout>
 
     </LinearLayout>
 
