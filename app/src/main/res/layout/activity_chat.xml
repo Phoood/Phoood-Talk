@@ -62,19 +62,21 @@
                 android:layout_alignParentLeft="true"
                 android:onClick="takePicture"
                 android:src="@android:drawable/ic_menu_camera"
-                />
+                android:contentDescription="Camera"/>
 
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/image_button"
-                android:src="@android:drawable/ic_menu_gallery" />
+                android:src="@android:drawable/ic_menu_gallery"
+                android:contentDescription="Image"/>
+
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/emoji_button"
-                android:src="@android:drawable/"
-                />
+                android:src="@drawable/ic_smiley_face"
+                android:contentDescription="Emoji"/>
 
         </LinearLayout>
 
