@@ -15,20 +15,35 @@ import com.phooodstudio.phooodtalk.model.Message;
 import java.util.ArrayList;
 
 /**
- * Created by Sung Rim Huh on 7/9/2016.
+ * Defines the adapter for Message class.
  */
 public class MessageAdapter extends BaseAdapter {
 
+    // the types for getItemViewType method
+    private static final int TYPES = 2;
     private static final int TYPE_STRING = 0;
     private static final int TYPE_IMAGE = 1;
 
+    // TODO: 7/16/2016 find more memory efficient way
     private ArrayList<Message> mItems = new ArrayList<>();
+
+    // used to create new view for individual item in the view
     private LayoutInflater mInflater;
 
+    /**
+     * Takes Context object and saves reference of LayoutInflater.
+     *
+     * @param context the current context
+     */
     public MessageAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
     }
 
+    /**
+     * Adds a Message to the adapter.
+     *
+     * @param msg the message to add
+     */
     public void add(Message msg) {
         mItems.add(msg);
         notifyDataSetChanged();
@@ -84,7 +99,7 @@ public class MessageAdapter extends BaseAdapter {
 
     @Override
     public int getViewTypeCount() {
-        return 2;
+        return TYPES;
     }
 
     @Override
