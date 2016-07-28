@@ -19,12 +19,16 @@ import java.util.ArrayList;
  */
 public class MessageAdapter extends BaseAdapter {
 
-    // the types for getItemViewType method
+    /*
+     * the types for getItemViewType method
+     * incoming and outgoing are based on this device
+     * e.g. outgoing is messages sent, incoming is messages received
+     */
     private static final int TYPES = 4;
-    private static final int TYPE_STRING_SELF = 0;
-    private static final int TYPE_STRING_OTHER = 1;
-    private static final int TYPE_IMAGE_SELF = 2;
-    private static final int TYPE_IMAGE_OTHER = 3;
+    private static final int TYPE_STRING_INCOMING = 0;
+    private static final int TYPE_STRING_OUTGOING = 1;
+    private static final int TYPE_IMAGE_INCOMING = 2;
+    private static final int TYPE_IMAGE_OUTGOING = 3;
 
     // TODO: 7/16/2016 find more memory efficient way
     private ArrayList<Message> mItems = new ArrayList<>();
@@ -75,20 +79,20 @@ public class MessageAdapter extends BaseAdapter {
 
             // inflate view according to the view types
             switch (getItemViewType(position)) {
-                case TYPE_STRING_SELF:
-                    currentView = mInflater.inflate(R.layout.message_chat, parent, false);
+                case TYPE_STRING_INCOMING:
+                    currentView = mInflater.inflate(R.layout.message_chat_incoming, parent, false);
                     break;
 
-                case TYPE_STRING_OTHER:
-                    currentView = mInflater.inflate(R.layout.message_chat_other, parent, false);
+                case TYPE_STRING_OUTGOING:
+                    currentView = mInflater.inflate(R.layout.message_chat_outgoing, parent, false);
                     break;
 
-                case TYPE_IMAGE_SELF:
-                    currentView = mInflater.inflate(R.layout.message_image, parent, false);
+                case TYPE_IMAGE_INCOMING:
+                    currentView = mInflater.inflate(R.layout.message_image_incoming, parent, false);
                     break;
 
-                case TYPE_IMAGE_OTHER:
-                    currentView = mInflater.inflate(R.layout.message_image_other, parent, false);
+                case TYPE_IMAGE_OUTGOING:
+                    currentView = mInflater.inflate(R.layout.message_image_outgoing, parent, false);
                     break;
             }
         }
@@ -126,19 +130,19 @@ public class MessageAdapter extends BaseAdapter {
         int viewType;
 
         if (content instanceof String) {
-            viewType = TYPE_STRING_SELF;
+            viewType = TYPE_STRING_OUTGOING;
         }
         else if (content instanceof Bitmap) {
-            viewType = TYPE_IMAGE_SELF;
+            viewType = TYPE_IMAGE_OUTGOING;
         }
         else {
             // TODO: 7/28/2016 this else statement should not be reached
-            viewType = TYPE_STRING_SELF;
+            viewType = TYPE_STRING_OUTGOING;
         }
 
         // TODO: 7/28/2016 find way to check if the account is current one
-        if (msg.getSender() != null) {
-            // exploit the fact that the other types are 1 more than self types
+        if (true /* just a place holder */) {
+            // exploit the fact that the outgoing types are 1 more than incoming types
             ++viewType;
         }
 
