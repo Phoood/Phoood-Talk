@@ -130,14 +130,14 @@ public class MessageAdapter extends BaseAdapter {
         int viewType;
 
         if (content instanceof String) {
-            viewType = TYPE_STRING_OUTGOING;
+            viewType = TYPE_STRING_INCOMING;
         }
         else if (content instanceof Bitmap) {
-            viewType = TYPE_IMAGE_OUTGOING;
+            viewType = TYPE_IMAGE_INCOMING;
         }
         else {
             // TODO: 7/28/2016 this else statement should not be reached
-            viewType = TYPE_STRING_OUTGOING;
+            viewType = TYPE_STRING_INCOMING;
         }
 
         // TODO: 7/28/2016 find way to check if the account is current one
