@@ -20,9 +20,11 @@ import java.util.ArrayList;
 public class MessageAdapter extends BaseAdapter {
 
     // the types for getItemViewType method
-    private static final int TYPES = 2;
-    private static final int TYPE_STRING = 0;
-    private static final int TYPE_IMAGE = 1;
+    private static final int TYPES = 4;
+    private static final int TYPE_STRING_SELF = 0;
+    private static final int TYPE_STRING_OTHER = 1;
+    private static final int TYPE_IMAGE_SELF = 2;
+    private static final int TYPE_IMAGE_OTHER = 3;
 
     // TODO: 7/16/2016 find more memory efficient way
     private ArrayList<Message> mItems = new ArrayList<>();
@@ -67,34 +69,49 @@ public class MessageAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        View v = convertView;
+        View currentView = convertView;
 
-        if (v == null) {
+        if (currentView == null) {
+
+            // inflate view according to the view types
             switch (getItemViewType(position)) {
-                case TYPE_STRING:
-                    v = mInflater.inflate(R.layout.message_chat, null);
+                case TYPE_STRING_SELF:
+                    currentView = mInflater.inflate(R.layout.message_chat, parent, false);
                     break;
-                case TYPE_IMAGE:
-                    v = mInflater.inflate(R.layout.message_image, null);
+
+                case TYPE_STRING_OTHER:
+                    currentView = mInflater.inflate(R.layout.message_chat_other, parent, false);
+                    break;
+
+                case TYPE_IMAGE_SELF:
+                    currentView = mInflater.inflate(R.layout.message_image, parent, false);
+                    break;
+
+                case TYPE_IMAGE_OTHER:
+                    currentView = mInflater.inflate(R.layout.message_image_other, parent, false);
+                    break;
             }
         }
 
+        // get the message item
         Message msg = (Message) getItem(position);
 
-        if (msg != null) {
+        // making sure we don't get null exception
+        if (currentView != null && msg != null) {
             Object content = msg.getContents();
 
+            // set the content according the message content
             if (content instanceof String) {
-                TextView textView = (TextView) v.findViewById(R.id.chat_content);
+                TextView textView = (TextView) currentView.findViewById(R.id.chat_content);
                 textView.setText((String) content);
             }
             else if (content instanceof Bitmap) {
-                ImageView imageView = (ImageView) v.findViewById(R.id.chat_content);
+                ImageView imageView = (ImageView) currentView.findViewById(R.id.chat_content);
                 imageView.setImageBitmap((Bitmap) content);
             }
         }
 
-        return v;
+        return currentView;
     }
 
     @Override
@@ -106,12 +123,25 @@ public class MessageAdapter extends BaseAdapter {
     public int getItemViewType(int position) {
         Message msg = (Message) getItem(position);
         Object content = msg.getContents();
+        int viewType;
+
         if (content instanceof String) {
-            return 0;
+            viewType = TYPE_STRING_SELF;
         }
         else if (content instanceof Bitmap) {
-            return 1;
+            viewType = TYPE_IMAGE_SELF;
         }
-        return super.getItemViewType(position);
+        else {
+            // TODO: 7/28/2016 this else statement should not be reached
+            viewType = TYPE_STRING_SELF;
+        }
+
+        // TODO: 7/28/2016 find way to check if the account is current one
+        if (msg.getSender() != null) {
+            // exploit the fact that the other types are 1 more than self types
+            ++viewType;
+        }
+
+        return viewType;
     }
 }
