@@ -47,12 +47,17 @@
                 android:layout_alignBottom="@+id/chat"
                 android:layout_alignParentRight="true"
                 android:onClick="sendMessage"
-                />
+                android:background="@color/colorPrimary"
+                android:textColor="@android:color/primary_text_dark"
+                android:elevation="@dimen/abc_button_padding_vertical_material"
+                android:fontFamily="@string/abc_searchview_description_submit"
+                android:textStyle="bold"
+                android:textSize="@dimen/abc_text_size_button_material" />
         </RelativeLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="horizontal">
 
             <ImageButton
@@ -62,7 +67,7 @@
                 android:layout_alignParentLeft="true"
                 android:onClick="takePicture"
                 android:src="@android:drawable/ic_menu_camera"
-                android:contentDescription="Camera"/>
+                android:contentDescription="Camera" />
 
             <ImageButton
                 android:layout_width="wrap_content"
@@ -77,6 +82,23 @@
                 android:id="@+id/emoji_button"
                 android:src="@drawable/ic_smiley_face"
                 android:contentDescription="Emoji"/>
+
+
+                <RatingBar
+                    android:id="@+id/rtbProductRating"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:numStars="5"
+                    android:rating="3"
+                    android:stepSize="1.0"
+                    android:isIndicator="false"
+                    style="@style/foodRatingBar"
+                    android:layout_gravity="center" />
+
+
+
+
+
 
         </LinearLayout>
 

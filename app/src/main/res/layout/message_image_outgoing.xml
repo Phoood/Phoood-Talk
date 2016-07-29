@@ -10,7 +10,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/chat_content"
         android:adjustViewBounds="true"
-        android:scaleType="centerCrop"
-        android:background="@android:color/holo_blue_dark" />
+        android:scaleType="centerCrop" />
 
 </LinearLayout>
