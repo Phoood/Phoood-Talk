@@ -3,14 +3,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@drawable/out_message_bg">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/chat_content"
         android:textSize="15sp"
-        android:background="@android:color/holo_blue_dark"
         android:textColor="@color/abc_primary_text_material_dark"
         android:padding="6dp" />
 
