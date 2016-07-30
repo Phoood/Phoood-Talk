@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1055152224545",
+    "firebase_url": "https://phooodtalk.firebaseio.com",
+    "project_id": "phooodtalk",
+    "storage_bucket": "phooodtalk.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1055152224545:android:c6c79e26edf4ca53",
+        "android_client_info": {
+          "package_name": "com.phooodstudio.phooodtalk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1055152224545-32he6bqp0v0fjgcmmjlo3kpuaa1sno75.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOZDRTGOdpucY9cIj9opnQJlhZpzFkyHA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Phoood Talk</string>
+    <string name="facebook_app_id">483540328511047</string>
+    <string name="fb_login_protocol_scheme">fb483540328511047</string>
+    <string name="profile_picture">Profile Picture</string>
+    <string name="nickname">Nickname</string>
+    <string name="emoji">Emoji</string>
+    <string name="rating_icons">Rating icons</string>
+    <string name="i_am_feeling_set">I\'m Feeling Set</string>
+    <string name="shared_photos">shared photos</string>
 </resources>

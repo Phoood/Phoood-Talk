@@ -1,5 +1,6 @@
 package com.phooodstudio.phooodtalk.presentation;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,7 @@ public class HomeActivity extends AppCompatActivity{
     //Variables
     //    private SlidingTabLayout mTabs;
     private CharSequence mTitles[] = {"Home", "Journal", "Friends"};
+    private static final String TAG = "HomeActivity";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,10 @@ public class HomeActivity extends AppCompatActivity{
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
     /**
      * Class that helps fill the toolbar dynamically.
@@ -106,6 +112,8 @@ public class HomeActivity extends AppCompatActivity{
             return mNumTabs;
         }
     }
+
+
 
 
 }
