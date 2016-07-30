@@ -28,6 +28,8 @@
             android:name=".presentation.HomeActivity"
             android:label="Home">
         </activity>
+        <activity android:name=".presentation.FriendActivity">
+        </activity>
 
         <activity android:name=".presentation.ChatActivity">
         </activity>
