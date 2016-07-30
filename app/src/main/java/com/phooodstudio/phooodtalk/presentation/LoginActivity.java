@@ -1,6 +1,7 @@
 package com.phooodstudio.phooodtalk.presentation;
 
 import android.Manifest;
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,6 +17,8 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -26,11 +29,21 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.phooodstudio.phooodtalk.PhooodTalkApp;
 import com.phooodstudio.phooodtalk.R;
+import com.phooodstudio.phooodtalk.model.Account;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Login Activity
@@ -38,6 +51,7 @@ import java.util.List;
  */
 public class LoginActivity extends AppCompatActivity {
 
+    private PhooodTalkApp mApplication;
     private LoginButton mLoginButton;
     private CallbackManager mCallbackManager;
     private Context mContext;
@@ -52,11 +66,14 @@ public class LoginActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_WRITE_EXT_STORAGE = 3;
     private static final String TAG = "LoginActivity";
 
-    public LoginActivity(){
+    public LoginActivity() {
         super();
 
         FACEBOOK_PERMISSIONS.add("email");
         FACEBOOK_PERMISSIONS.add("public_profile");
+        FACEBOOK_PERMISSIONS.add("user_birthday");
+        FACEBOOK_PERMISSIONS.add("user_friends");
+        FACEBOOK_PERMISSIONS.add("user_about_me");
     }
 
     @Override
@@ -64,6 +81,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         mContext = this;
+        mApplication = (PhooodTalkApp) getApplication();
 
         //UI Elements
         mLoginButton = (LoginButton) findViewById(R.id.login_button);
@@ -207,6 +225,7 @@ public class LoginActivity extends AppCompatActivity {
     /**
      * Processes results from activity
      * For LoginActivity, this is just processing the result of Facebook login
+     *
      * @param requestCode
      * @param resultCode
      * @param data
@@ -220,6 +239,7 @@ public class LoginActivity extends AppCompatActivity {
 
     /**
      * This method is responsible for linking the Firebase account with the Facebook Account
+     *
      * @param token - grants access to the linked Firebase account
      */
     private void handleFacebookAccessToken(AccessToken token) {
@@ -246,21 +266,89 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
+    private void handleFirebaseEntry(JSONObject jsonObject) {
+        String facebookId = "1";
+        String name = "default user";
+        String email = "email@example.com";
+        String birthday = "01/01/1901";
+        String gender = "n/a";
 
-    private void facebookCallbackOnSuccess(LoginResult loginResult){
+        // Application code
+        try {
+            facebookId = jsonObject.getString("id");
+            name = jsonObject.getString("name");
+            email = jsonObject.getString("email");
+            birthday = jsonObject.getString("birthday"); // 01/31/1980 format
+            gender = jsonObject.getString("gender");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        //Retrieve account root
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference reference = database.getReference("users");
+        DatabaseReference accountRoot = reference.child(facebookId);
+
+        //Set fields
+        accountRoot.child("name").setValue(name);
+        accountRoot.child("email").setValue(email);
+        accountRoot.child("birthday").setValue(birthday);
+        accountRoot.child("gender").setValue(gender);
+
+        //Set last login time
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        long time = cal.getTimeInMillis();
+        accountRoot.child("last login").setValue(time);
+
+        //Create static account object
+        Account currentAccount =  new Account();
+        currentAccount.setName(name);
+        currentAccount.setId(facebookId);
+        currentAccount.setEmail(email);
+        currentAccount.setBirthday(birthday);
+        currentAccount.setGender(gender);
+        currentAccount.setLastLogin(time);
+        mApplication.setCurrentAccount(currentAccount);
+    }
+
+
+    /**
+     * Helper method for success callback
+     *
+     * @param loginResult
+     */
+    private void facebookCallbackOnSuccess(LoginResult loginResult) {
         Log.i(TAG, "Connected to Facebook");
         handleFacebookAccessToken(loginResult.getAccessToken());
+
+        //Requesting email and putting it into database
+        GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(),
+                new GraphRequest.GraphJSONObjectCallback() {
+
+                    @Override
+                    public void onCompleted(JSONObject object, GraphResponse response) {
+                        Log.v("LoginActivity", response.toString());
+                        handleFirebaseEntry(object);
+                    }
+                });
+
+        //Create bundle to specify data
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "id, name, email, gender, birthday");
+        request.setParameters(parameters);
+        request.executeAsync();
+
         Intent homeIntent = new Intent(mContext, HomeActivity.class);
         startActivity(homeIntent);
     }
 
-    private void facebookCallbackOnCancel(){
+    private void facebookCallbackOnCancel() {
         Log.i(TAG, "Canceled connection to Facebook");
 
     }
 
-    private void facebookCallbackOnError(FacebookException exception){
-        Log.e(TAG, "Error connecting to Facebook");
+    private void facebookCallbackOnError(FacebookException exception) {
+        Log.e(TAG, "Error connecting to Facebook ");
 
     }
 

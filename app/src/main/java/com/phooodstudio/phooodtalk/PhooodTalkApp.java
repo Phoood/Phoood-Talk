@@ -5,6 +5,7 @@ import android.app.Application;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.phooodstudio.phooodtalk.model.Account;
 
 /**
  * Created by Chris on 12-Jul-16.
@@ -15,6 +16,7 @@ public class PhooodTalkApp extends Application {
     private static final String TAG = "PhooodTalkApp";
 
     private FirebaseAnalytics mFirebaseAnalytics;
+    private Account mCurrentAccount;
 
     @Override
     public void onCreate() {
@@ -28,5 +30,11 @@ public class PhooodTalkApp extends Application {
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
     }
 
+    public Account getCurrentAccount() {
+        return mCurrentAccount;
+    }
 
+    public void setCurrentAccount(Account currentAccount) {
+        mCurrentAccount = currentAccount;
+    }
 }

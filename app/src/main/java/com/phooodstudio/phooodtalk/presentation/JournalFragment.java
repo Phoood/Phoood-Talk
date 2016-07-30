@@ -66,12 +66,12 @@ public class JournalFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_journal, container, false);
         mContext = getActivity();
 
-        final FirebaseStorage storage = FirebaseStorage.getInstance();
-        mStorageReference = storage.getReferenceFromUrl("gs://phooodtalk.appspot.com ");
+//        final FirebaseStorage storage = FirebaseStorage.getInstance();
+//        mStorageReference = storage.getReferenceFromUrl("gs://phooodtalk.appspot.com");
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        mDatabaseReference = database.getReference("picture");
+        mDatabaseReference = database.getReference("sharedPicture");
 
-        //Create directory
+        //Create directory to store image
         try {
             super.onCreate(savedInstanceState);
             File root = new File(Environment.getExternalStorageDirectory() +
@@ -99,30 +99,32 @@ public class JournalFragment extends Fragment {
             }
         });
 
-        mDatabaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String filename = dataSnapshot.getValue(String.class);
-                StorageReference downloadReference = mStorageReference.child(filename);
-                final Uri downloadURI = Uri.fromFile(mDownloadFile);
-                downloadReference.getFile(mDownloadFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                        try {
-                            Bitmap loadBitmap  = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), downloadURI);
-                            mImageView.setImageBitmap(loadBitmap);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "Failed to read value.", databaseError.toException());
-            }
-        });
+//        mDatabaseReference.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                String filename = dataSnapshot.getValue(String.class);
+//                if (filename != null || !filename.equals("")) {
+//                    StorageReference downloadReference = mStorageReference.child(filename);
+//                    final Uri downloadURI = Uri.fromFile(mDownloadFile);
+//                    downloadReference.getFile(mDownloadFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+//                        @Override
+//                        public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+//                            try {
+//                                Bitmap loadBitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), downloadURI);
+//                                mImageView.setImageBitmap(loadBitmap);
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    });
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                Log.w(TAG, "Failed to read value.", databaseError.toException());
+//            }
+//        });
 
         return view;
     }
