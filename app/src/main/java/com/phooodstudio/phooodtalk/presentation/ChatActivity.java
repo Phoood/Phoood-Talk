@@ -130,7 +130,7 @@ public class ChatActivity extends AppCompatActivity {
         mFirebaseStorage = FirebaseStorage.getInstance();
         mStorageReference = mFirebaseStorage.getReferenceFromUrl("gs://phooodtalk.appspot.com");
 
-        mAdapter = new MessageAdapter(this);
+        mAdapter = new MessageAdapter(this, mApplication.getCurrentAccount().getId());
 
         ListView listView = (ListView) findViewById(R.id.chat_messages);
         if (listView != null) {

@@ -35,14 +35,16 @@ public class MessageAdapter extends BaseAdapter {
 
     // used to create new view for individual item in the view
     private LayoutInflater mInflater;
+    private String mId;
 
     /**
      * Takes Context object and saves reference of LayoutInflater.
      *
      * @param context the current context
      */
-    public MessageAdapter(Context context) {
+    public MessageAdapter(Context context, String id) {
         mInflater = LayoutInflater.from(context);
+        mId = id;
     }
 
     /**
@@ -141,7 +143,7 @@ public class MessageAdapter extends BaseAdapter {
         }
 
         // TODO: 7/28/2016 find way to check if the account is current one
-        if (true /* just a place holder */) {
+        if (mId.equals(((Message) getItem(position)).getSender())) {
             // exploit the fact that the outgoing types are 1 more than incoming types
             ++viewType;
         }
