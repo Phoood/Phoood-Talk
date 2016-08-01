@@ -12,15 +12,21 @@ import java.sql.Time;
  * Created by Christopher Cabreros on 27-Jun-16.
  * Defines a singular message to be sent
  */
-@IgnoreExtraProperties
-public class Message{
-//
+public class Message {
+
+    // number of types
+    public static final int TYPES = 3;
+    public static final int TYPE_STRING = 0;
+    public static final int TYPE_IMAGE = 1;
+    public static final int TYPE_RATING = 2;
+
 //    private Location mLocation;
     private String mSender; //id
     private String mTimeSent;
-    private String mId;
     private String mContents;
-//
+
+    private int mType;
+
 //    public Location getLocation() {
 //        return mLocation;
 //    }
@@ -53,11 +59,11 @@ public class Message{
         mContents = contents;
     }
 
-    public String getId() {
-        return mId;
+    public int getType() {
+        return mType;
     }
 
-    public void setId(String id) {
-        mId = id;
+    public void setType(int type) {
+        mType = type;
     }
 }

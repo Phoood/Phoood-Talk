@@ -155,6 +155,7 @@ public class ChatActivity extends AppCompatActivity {
             msg.setContents(string);
             msg.setSender(mApplication.getCurrentAccount().getId());
             msg.setTimeSent(Long.toString(time));
+            msg.setType(Message.TYPE_STRING);
 
             sendMessageToFirebase(msg);
 
