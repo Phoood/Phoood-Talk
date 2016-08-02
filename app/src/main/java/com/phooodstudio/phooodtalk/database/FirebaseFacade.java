@@ -9,13 +9,16 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.phooodstudio.phooodtalk.model.Message;
+import com.phooodstudio.phooodtalk.request.FileRequest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
 
@@ -125,42 +128,45 @@ public class FirebaseFacade {
         });
     }
 
-//    /**
-//     * Requests a file from storage, using the path given
-//     *
-//     * @param args - path to storage location
-//     */
-//    public File requestFileFromStorage(File externalCacheDir, final String... args) {
-//        //Filepath
-//        StorageReference storage = mStorageReference.getRoot();
-//        for (String var : args) {
-//            storage = storage.child(var);
-//        }
-//
-//        //Create tempoary file in external cache dir
-//        File tempFile = null;
-//        try {
-//            tempFile = File.createTempFile(args[args.length - 1], null, externalCacheDir);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        //Attempt retrieval on a different thread
-//        storage.getFile(tempFile).addOnSuccessListener(
-//                new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-//                    @Override
-//                    public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-//                        Log.d(TAG, "File " + Arrays.toString(args) + " was successfully downloaded");
-//                    }
-//                }
-//        ).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception e) {
-//                Log.d(TAG, "File " + Arrays.toString(args) + " could not be downloaded. Log: \n");
-//                e.printStackTrace();
-//            }
-//        });
-//        return tempFile; //NO DONT ACTUALLY DO THIS, THIS IS ALL INCORRECT
-//
-//    }
+    /**
+     * Requests a file from storage, using the path given
+     *
+     */
+    public void requestFileFromStorage(final FileRequest request) {
+        final String[] args = request.getFilePath();
+        File externalCacheDir = request.getCacheDir();
+
+        //Filepath in Firebase Storage
+        StorageReference storage = mStorageReference.getRoot();
+        for (String var : args) {
+            storage = storage.child(var);
+        }
+
+        //Create temporary file in external cache dir
+        try {
+            final File tempFile = File.createTempFile(args[args.length - 1], null, externalCacheDir);
+
+            //Attempt retrieval on a different thread
+            storage.getFile(tempFile).addOnSuccessListener(
+                    new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                            Log.d(TAG, "File " + Arrays.toString(args) + " was successfully downloaded");
+
+                            //Notify request is successful
+                            request.notifyRequestSuccessful(tempFile);
+                        }
+                    }
+            ).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d(TAG, "File " + Arrays.toString(args) + " could not be downloaded. Log: \n");
+                    e.printStackTrace();
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 }
