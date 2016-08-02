@@ -23,7 +23,7 @@ import java.util.Arrays;
  * Created by Chris on 07-Jul-16.
  * For organization
  */
-public abstract class FirebaseFacade {
+public class FirebaseFacade {
 
     public static final String TAG = "Firebase Facade";
 
