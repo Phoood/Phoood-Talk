@@ -46,10 +46,6 @@ public class ChatActivity extends AppCompatActivity {
 
     private PhooodTalkApp mApplication;
     private Account mOtherPerson;
-    private FirebaseStorage mFirebaseStorage;
-    private StorageReference mStorageReference;
-    private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mDatabaseReference;
     private MessageAdapter mAdapter;
 
     private String chatId;
@@ -81,57 +77,9 @@ public class ChatActivity extends AppCompatActivity {
         }
         Log.d(TAG, "chatId: " + chatId);
 
-        //Initialize databases
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mDatabaseReference = mFirebaseDatabase.getReference("messages").child(chatId);
-        mDatabaseReference.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-                Log.d(TAG, "Received new Data" + dataSnapshot.toString());
-                Message message = dataSnapshot.getValue(Message.class);
 
-//                JSONObject jsonObject = (JSONObject) dataSnapshot.getValue(JSONObject.class);
-//
-//                try {
-//                    message.setContents(jsonObject.getString("message"));
-//                    message.setSender(jsonObject.getString("sender"));
-//                    message.setTimeSent(Long.parseLong(jsonObject.getString("time")));
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-                mAdapter.add(message);
-
-                mAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
-                //should not happen
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                //should not happen
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
-                //should not happen
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e(TAG, "Data received canceled");
-
-            }
-        });
-
-        //Initialize Storage
-        mFirebaseStorage = FirebaseStorage.getInstance();
-        mStorageReference = mFirebaseStorage.getReferenceFromUrl("gs://phooodtalk.appspot.com");
-
+        //Set adapter
         mAdapter = new MessageAdapter(this, mApplication.getCurrentAccount().getId());
-
         ListView listView = (ListView) findViewById(R.id.chat_messages);
         if (listView != null) {
             listView.setAdapter(mAdapter);
@@ -157,7 +105,7 @@ public class ChatActivity extends AppCompatActivity {
             msg.setTimeSent(Long.toString(time));
             msg.setType(Message.TYPE_STRING);
 
-            sendMessageToFirebase(msg);
+            //send message to firebase
 
             text.clear();
         }
@@ -192,24 +140,5 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
-
-    /**
-     * Sends the message to Firebase.
-     * Uses the time sent as an ID
-     *
-     * @param message
-     */
-    private void sendMessageToFirebase(Message message) {
-        DatabaseReference messageRootRef = mDatabaseReference.child(message.getTimeSent() + "");
-//        JSONObject messageObject = new JSONObject();
-//        try {
-//            messageObject.put("message", (String) message.getContents());//TODO: change implementation
-//            messageObject.put("sender", message.getSender());
-//            messageObject.put("time", message.getTimeSent() + "");
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-        messageRootRef.setValue(message);
-    }
 
 }

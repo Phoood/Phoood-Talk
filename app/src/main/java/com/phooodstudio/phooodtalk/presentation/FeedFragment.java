@@ -33,24 +33,24 @@ public class FeedFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_feed, container, false);
+                View view = inflater.inflate(R.layout.fragment_feed, container, false);
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference myRef = database.getReference("message");
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                final DatabaseReference myRef = database.getReference("message");
 
-        mEditText = (MultiAutoCompleteTextView) view.findViewById(R.id.fragment_feed_edit_text);
-        mTextView = (TextView) view.findViewById(R.id.fragment_feed_text_view);
-        mButton = (Button) view.findViewById(R.id.enter_button);
-        mButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                myRef.setValue(mEditText.getText().toString());
-            }
-        });
+                mEditText = (MultiAutoCompleteTextView) view.findViewById(R.id.fragment_feed_edit_text);
+                mTextView = (TextView) view.findViewById(R.id.fragment_feed_text_view);
+                mButton = (Button) view.findViewById(R.id.enter_button);
+                mButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        myRef.setValue(mEditText.getText().toString());
+                    }
+                });
 
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+                myRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
                 String value = dataSnapshot.getValue(String.class);
                 mTextView.setText(value);
                 Log.d(TAG, "Value is: " + value);
