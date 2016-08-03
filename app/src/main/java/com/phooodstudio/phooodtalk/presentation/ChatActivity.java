@@ -3,7 +3,9 @@ package com.phooodstudio.phooodtalk.presentation;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -22,12 +24,16 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.phooodstudio.phooodtalk.PhooodTalkApp;
 import com.phooodstudio.phooodtalk.R;
+import com.phooodstudio.phooodtalk.database.FirebaseHelper;
 import com.phooodstudio.phooodtalk.model.Account;
 import com.phooodstudio.phooodtalk.model.Message;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
 import java.sql.Time;
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -49,6 +55,9 @@ public class ChatActivity extends AppCompatActivity {
     private MessageAdapter mAdapter;
 
     private String chatId;
+
+    private String photoFilename;
+    private Uri photoUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,7 +127,41 @@ public class ChatActivity extends AppCompatActivity {
      */
     public void takePicture(View view) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, REQUEST_CODE_CAMERA);
+
+        File photoFile = null;
+
+        long time = Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTimeInMillis();
+
+        // create temporary file for saving image
+        try {
+            photoFile = File.createTempFile(
+                mApplication.getCurrentAccount().getId() + "_" + time,
+                ".jpg",
+                getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            );
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (photoFile != null) {
+
+            photoFilename = photoFile.getName();
+
+            // get URI for the file
+            photoUri = FileProvider.getUriForFile(
+                this,
+                "com.phooodstudio.phooodtalk.fileprovider",
+                photoFile
+            );
+
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+
+            // check if any app can handle taking picture
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                startActivityForResult(intent, REQUEST_CODE_CAMERA);
+            }
+        }
     }
 
     /**
@@ -130,15 +173,19 @@ public class ChatActivity extends AppCompatActivity {
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CODE_CAMERA) {
-            if (resultCode == RESULT_OK) {
-                Bitmap photo = (Bitmap) data.getExtras().get("data");
-                Message msg = new Message();
-                //msg.setContents(photo);
-                mAdapter.add(msg);
-            }
+        switch (requestCode) {
+
+            case REQUEST_CODE_CAMERA:
+                if (resultCode == RESULT_OK) {
+                    try {
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), photoUri);
+                        FirebaseHelper.getInstance().sendImage(bitmap, 0, "images", photoFilename);
+                    }
+                    catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
         }
     }
-
-
 }
