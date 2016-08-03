@@ -26,61 +26,95 @@ import java.util.Arrays;
  * Created by Chris on 07-Jul-16.
  * For organization
  */
-public class FirebaseFacade {
+public final class FirebaseHelper {
 
     public static final String TAG = "Firebase Facade";
 
-    private FirebaseDatabase mFirebaseDatabase;
+    private static final String REFERENCE_URL = "gs://phooodtalk.appspot.com";
 
-    private FirebaseStorage mFirebaseStorage;
+    private static FirebaseHelper instance = null;
+
     private StorageReference mStorageReference;
 
-    public FirebaseFacade() {
-
-        //Initialize Storage
-        mFirebaseStorage = FirebaseStorage.getInstance();
-        mStorageReference = mFirebaseStorage.getReferenceFromUrl("gs://phooodtalk.appspot.com");
-
-        //Initialize databases
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
+    /**
+     * The constructor.
+     */
+    private FirebaseHelper() {
+        mStorageReference = FirebaseStorage.getInstance().getReferenceFromUrl(REFERENCE_URL);
     }
 
+    /**
+     * Returns the singleton reference.
+     *
+     * @return the singleton reference
+     */
+    public static FirebaseHelper getInstance() {
 
-    public DatabaseReference getDatabaseReference(String... args) {
-        DatabaseReference returnDatabase = mFirebaseDatabase.getReference();
-        for (String var : args) {
-            returnDatabase = returnDatabase.child(var);
+        // create the singleton if none exists
+        if (instance == null) {
+            instance = new FirebaseHelper();
         }
 
-        return returnDatabase;
+        return instance;
     }
 
+    /**
+     * Returns the reference to the specified path in Firebase Database.
+     *
+     * @param args the path
+     * @return reference to the Firebase Database specified by args
+     */
+    public DatabaseReference getDatabaseReference(String... args) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        for (String var : args) {
+            reference = reference.child(var);
+        }
 
-    public StorageReference getStorageReference() {
-        return mStorageReference;
+        return reference;
+    }
+
+    /**
+     * Returns the reference to the specified path in Firebase Storage.
+     *
+     * @param args the path
+     * @return reference to the Firebase Storage specified by args
+     */
+    public StorageReference getStorageReference(String... args) {
+        StorageReference reference = mStorageReference.getRoot();
+        for (String var : args) {
+            reference = reference.child(var);
+        }
+
+        return reference;
     }
 
 
     /**
      * Sends the message to Firebase.
-     * Uses the time sent as an ID
+     * Uses the time sent as an ID.
      *
-     * @param message
+     * @param message the message to send
+     * @param chatId  the chat id
      */
-    public void sendMessageToFirebase(Message message, String chatId) {
-        DatabaseReference messageRootRef = mFirebaseDatabase.getReference("message")
-                .child(chatId)
-                .child(message.getTimeSent() + "");
+    public void sendMessage(Message message, String chatId) {
+        DatabaseReference messageRootRef = getDatabaseReference(
+            "message",
+            chatId,
+            message.getTimeSent()
+        );
         messageRootRef.setValue(message);
     }
 
+    /**
+     * Sends an arbitrary local file pointed by obj to Firebase.
+     *
+     * @param obj  the file to send
+     * @param args the file path to store in the Firebase Storage
+     */
+    public void sendFile(Uri obj, final String... args) {
 
-    public void sendFileToFirebase(Uri obj, final String... args) { //TODO: change this to what you need
         //Filepath
-        StorageReference storage = mStorageReference.getRoot();
-        for (String var : args) {
-            storage = storage.child(var);
-        }
+        StorageReference storage = getStorageReference(args);
 
         UploadTask uploadTask = storage.putFile(obj);
         uploadTask.addOnFailureListener(new OnFailureListener() {
@@ -97,18 +131,16 @@ public class FirebaseFacade {
 
     }
 
-    public void sendFileToFirebase(File obj, final String... args){
+    public void sendFile(File obj, final String... args){
         Uri resource = Uri.fromFile(obj);
-        sendFileToFirebase(resource, args);
+        sendFile(resource, args);
     }
 
     //TODO: decide on a standard image directory
-    public void sendImageToFirebase(Bitmap bitmap, int quality, final String...args){
+    public void sendImage(Bitmap bitmap, int quality, final String... args) {
+
         //Filepath
-        StorageReference storage = mStorageReference.getRoot();
-        for (String var : args) {
-            storage = storage.child(var);
-        }
+        StorageReference storage = getStorageReference(args);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, quality, outputStream);
@@ -132,7 +164,7 @@ public class FirebaseFacade {
      * Requests a file from storage, using the path given
      *
      */
-    public void requestFileFromStorage(final FileRequest request) {
+    public void requestFile(final FileRequest request) {
         final String[] args = request.getFilePath();
         File externalCacheDir = request.getCacheDir();
 
