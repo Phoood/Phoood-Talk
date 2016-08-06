@@ -55,7 +55,6 @@ public class ChatActivity extends AppCompatActivity {
     private MessageAdapter mAdapter;
 
     private String chatId;
-
     private String photoFilename;
     private Uri photoUri;
 
@@ -89,7 +88,7 @@ public class ChatActivity extends AppCompatActivity {
 
         //Set adapter
         mAdapter = new MessageAdapter(this, mApplication.getCurrentAccount().getId());
-        ListView listView = (ListView) findViewById(R.id.chat_messages);
+        final ListView listView = (ListView) findViewById(R.id.chat_messages);
         if (listView != null) {
             listView.setAdapter(mAdapter);
         }
@@ -104,6 +103,9 @@ public class ChatActivity extends AppCompatActivity {
                         Message message = dataSnapshot.getValue(Message.class);
                         mAdapter.add(message);
                         mAdapter.notifyDataSetChanged();
+
+                        //Scroll to the bottom
+                        listView.setSelection(mAdapter.getCount() - 1);
                     }
 
                     @Override

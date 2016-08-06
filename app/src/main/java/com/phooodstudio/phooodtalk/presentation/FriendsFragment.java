@@ -2,6 +2,8 @@ package com.phooodstudio.phooodtalk.presentation;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -18,10 +21,12 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 import com.phooodstudio.phooodtalk.R;
+import com.phooodstudio.phooodtalk.database.FacebookHelper;
 import com.phooodstudio.phooodtalk.model.Account;
 
 import org.json.JSONArray;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -114,7 +119,11 @@ public class FriendsFragment extends Fragment {
             }
 
             //Add elements
-            //TODO: set profile picture, and change profile pic size in postRunnable
+            final ImageView imageView = (ImageView) returnView.findViewById(
+                    R.id.fragment_friends_account_picture);
+
+            //Set profile pic and text
+            new RetrieveImageTask(imageView).execute(getItem(position));
             TextView nameView = (TextView) returnView.findViewById(R.id.fragment_friends_account_name);
             nameView.setText(getItem(position).getName());
 
@@ -128,6 +137,42 @@ public class FriendsFragment extends Fragment {
             });
 
             return returnView;
+        }
+    }
+
+    class RetrieveImageTask extends AsyncTask<Account, Void, Bitmap> {
+
+        private ImageView mEditView;
+
+        public RetrieveImageTask(ImageView editView) {
+            super();
+            mEditView = editView;
+        }
+
+        @Override
+        protected Bitmap doInBackground(Account... params) {
+            Bitmap profileBitmap = null;
+            try {
+                profileBitmap = FacebookHelper.getFacebookProfilePicture(params[0].getId());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return profileBitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+
+            mEditView.setImageBitmap(bitmap);
+            mEditView.post(new Runnable() {
+                @Override
+                public void run() {
+                    mEditView.setMaxWidth(mEditView.getHeight());
+                }
+            });
+
+            Log.d(TAG, "Task completed");
         }
     }
 
