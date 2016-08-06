@@ -5,6 +5,7 @@ import android.app.Application;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.auth.FacebookAuthCredential;
 import com.phooodstudio.phooodtalk.model.Account;
 
 /**

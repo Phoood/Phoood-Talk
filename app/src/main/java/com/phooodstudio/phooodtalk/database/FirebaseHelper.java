@@ -88,7 +88,6 @@ public final class FirebaseHelper {
         return reference;
     }
 
-
     /**
      * Sends the message to Firebase.
      * Uses the time sent as an ID.
@@ -98,7 +97,7 @@ public final class FirebaseHelper {
      */
     public void sendMessage(Message message, String chatId) {
         DatabaseReference messageRootRef = getDatabaseReference(
-            "message",
+            "messages",
             chatId,
             message.getTimeSent()
         );
@@ -143,7 +142,7 @@ public final class FirebaseHelper {
         StorageReference storage = getStorageReference(args);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, quality, outputStream);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
         byte[] output = outputStream.toByteArray();
 
         UploadTask uploadTask = storage.putBytes(output);

@@ -169,8 +169,14 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
         mFirebaseAuth.addAuthStateListener(mFirebaseAuthListener);
 
-        //Run login
-        LoginManager.getInstance().logInWithReadPermissions(this, FACEBOOK_PERMISSIONS);
+        if (getIntent().hasExtra("logged out")){ //do nothing
+            Log.d(TAG, "Logged out");
+        }
+        else{
+            //Run login
+            LoginManager.getInstance().logInWithReadPermissions(this, FACEBOOK_PERMISSIONS);
+            Log.d(TAG, "Logging in");
+        }
     }
 
     @Override

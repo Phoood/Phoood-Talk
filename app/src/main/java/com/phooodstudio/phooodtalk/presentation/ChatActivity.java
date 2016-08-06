@@ -93,6 +93,42 @@ public class ChatActivity extends AppCompatActivity {
         if (listView != null) {
             listView.setAdapter(mAdapter);
         }
+
+        //Set data listener for adapter
+        //Note: this currently will get everything
+        FirebaseHelper.getInstance().getDatabaseReference("messages", chatId)
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        Log.d(TAG, "Received new Data" + dataSnapshot.toString());
+                        Message message = dataSnapshot.getValue(Message.class);
+                        mAdapter.add(message);
+                        mAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.e(TAG, "Chat " + chatId + " onCanceled called");
+                    }
+                });
+
+        //Change name of support action bar
+        getSupportActionBar().setTitle(mOtherPerson.getName());
     }
 
     /**
@@ -108,6 +144,7 @@ public class ChatActivity extends AppCompatActivity {
             Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
             long time = cal.getTimeInMillis();
 
+            //Create new message
             Message msg = new Message();
             msg.setContents(string);
             msg.setSender(mApplication.getCurrentAccount().getId());
@@ -115,7 +152,9 @@ public class ChatActivity extends AppCompatActivity {
             msg.setType(Message.TYPE_STRING);
 
             //send message to firebase
+            FirebaseHelper.getInstance().sendMessage(msg, chatId);
 
+            //Clear the text in the chat window
             text.clear();
         }
     }

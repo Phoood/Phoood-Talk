@@ -99,32 +99,6 @@ public class JournalFragment extends Fragment {
             }
         });
 
-//        mDatabaseReference.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                String filename = dataSnapshot.getValue(String.class);
-//                if (filename != null || !filename.equals("")) {
-//                    StorageReference downloadReference = mStorageReference.child(filename);
-//                    final Uri downloadURI = Uri.fromFile(mDownloadFile);
-//                    downloadReference.getFile(mDownloadFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-//                        @Override
-//                        public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-//                            try {
-//                                Bitmap loadBitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), downloadURI);
-//                                mImageView.setImageBitmap(loadBitmap);
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                    });
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//                Log.w(TAG, "Failed to read value.", databaseError.toException());
-//            }
-//        });
 
         return view;
     }

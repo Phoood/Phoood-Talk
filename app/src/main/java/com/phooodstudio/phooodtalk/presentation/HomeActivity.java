@@ -1,5 +1,6 @@
 package com.phooodstudio.phooodtalk.presentation;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -7,20 +8,26 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.phooodstudio.phooodtalk.R;
 
 /**
  * Created by Christopher Cabreros on 25-Jun-16.
  * Defines the home activity
  */
-public class HomeActivity extends AppCompatActivity{
+public class HomeActivity extends AppCompatActivity {
 
-    //Variables
-    //    private SlidingTabLayout mTabs;
     private CharSequence mTitles[] = {"Home", "Journal", "Friends"};
     private static final String TAG = "HomeActivity";
+    private AlertDialog.Builder mDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,6 +47,31 @@ public class HomeActivity extends AppCompatActivity{
             tabLayout.setupWithViewPager(toolbarPager);
         }
 
+        //Create yes/no dialog
+        mDialog = new AlertDialog.Builder(this);
+        mDialog
+                .setTitle("Logout?")
+                .setMessage("Logout from PhooodTalk")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        LoginManager.getInstance().logOut();
+
+                        //Signify we logged out
+                        Toast.makeText(getBaseContext(),
+                                "Logged out from Facebook",
+                                Toast.LENGTH_SHORT)
+                                .show();
+
+                        Intent intent = new Intent(getBaseContext(), LoginActivity.class);
+                        intent.putExtra("logged out", 123);
+                        finish();
+                        startActivity(intent);
+                    }
+                })
+                .setNegativeButton("No", null);
+
     }
 
     @Override
@@ -57,7 +89,8 @@ public class HomeActivity extends AppCompatActivity{
 
         /**
          * Constructor
-         * @param fm - fragment manager from parent activity
+         *
+         * @param fm     - fragment manager from parent activity
          * @param titles - a sequence of titles.
          */
         public HomePagerAdapter(FragmentManager fm, CharSequence[] titles) {
@@ -66,7 +99,7 @@ public class HomeActivity extends AppCompatActivity{
             mTitles = titles;
             mNumTabs = titles.length;
 
-            if (titles.length <= 2){
+            if (titles.length <= 2) {
                 throw new IllegalArgumentException("Titles does not have enough titles");
             }
         }
@@ -74,28 +107,34 @@ public class HomeActivity extends AppCompatActivity{
 
         /**
          * Gets the item at the current position
+         *
          * @param position - position to get the fragment at
          * @return - fragment that corresponds to each position
          */
         @Override
         public Fragment getItem(int position) {
-            switch (position){
-                case 0: return new FeedFragment();
-                case 1: return new JournalFragment();
-                case 2: return new FriendsFragment();
-                default: return new Fragment();
+            switch (position) {
+                case 0:
+                    return new FeedFragment();
+                case 1:
+                    return new JournalFragment();
+                case 2:
+                    return new FriendsFragment();
+                default:
+                    return new Fragment();
             }
         }
 
 
         /**
          * Gets the page title at the position
+         *
          * @param position - position to get the title at
          * @return - title at specific position
          */
         @Override
         public CharSequence getPageTitle(int position) {
-            if (position >= mNumTabs){
+            if (position >= mNumTabs) {
                 throw new IndexOutOfBoundsException("HomePagerAdapter method getPageTitle has " +
                         "position out of bounds.");
             }
@@ -105,6 +144,7 @@ public class HomeActivity extends AppCompatActivity{
 
         /**
          * Returns the amount of tabs that exist
+         *
          * @return - number of tabs that exist
          */
         @Override
@@ -114,6 +154,25 @@ public class HomeActivity extends AppCompatActivity{
     }
 
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int option = item.getItemId();
+
+        if (option == R.id.action_settings) {
+            Log.d(TAG, "Chose menu option " + option);
+            mDialog.show();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
 
 }
