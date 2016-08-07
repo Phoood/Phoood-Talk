@@ -3,40 +3,43 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:padding="8dp">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="3dp">
+        android:padding="3dp"
+        android:layout_weight="20">
 
         <ImageView
             android:id="@+id/fragment_friends_account_picture"
-            android:layout_width="20dp"
+            android:layout_width="30dp"
             android:layout_height="match_parent"
             android:background="#000000"
             android:padding="4dp"
-            android:scaleType="centerInside"
+            android:scaleType="centerCrop"
+            android:contentDescription="Profile picture of person"
             />
 
         <TextView
             android:id="@+id/fragment_friends_account_name"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:padding="4dp"
             android:text="null name"
-            android:textSize="20sp"
+            android:textSize="24sp"
+            android:layout_weight="10"
             />
 
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#888888"
-        android:padding="4dp"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="Profile"
+        android:id="@+id/fragment_friends_account_select_profile"/>
 
 </LinearLayout>

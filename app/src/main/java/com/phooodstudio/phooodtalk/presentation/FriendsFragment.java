@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -121,12 +122,19 @@ public class FriendsFragment extends Fragment {
             //Add elements
             final ImageView imageView = (ImageView) returnView.findViewById(
                     R.id.fragment_friends_account_picture);
+            imageView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    imageView.setMaxWidth(imageView.getHeight());
+                }
+            }, 300);
 
             //Set profile pic and text
-            new RetrieveImageTask(imageView).execute(getItem(position));
+            new FacebookHelper.RetrieveImageTask(imageView).execute(getItem(position));
             TextView nameView = (TextView) returnView.findViewById(R.id.fragment_friends_account_name);
             nameView.setText(getItem(position).getName());
 
+            //Set regular tap behavior
             returnView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -136,44 +144,21 @@ public class FriendsFragment extends Fragment {
                 }
             });
 
+            //Set button click behavior
+            Button button = (Button) returnView.findViewById(
+                    R.id.fragment_friends_account_select_profile);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent friendActivityIntent = new Intent(getActivity(), FriendActivity.class);
+                    friendActivityIntent.putExtra(ACCOUNT_EXTRA, getItem(finalPosition));
+                    startActivity(friendActivityIntent);
+                }
+            });
+
             return returnView;
         }
     }
 
-    class RetrieveImageTask extends AsyncTask<Account, Void, Bitmap> {
-
-        private ImageView mEditView;
-
-        public RetrieveImageTask(ImageView editView) {
-            super();
-            mEditView = editView;
-        }
-
-        @Override
-        protected Bitmap doInBackground(Account... params) {
-            Bitmap profileBitmap = null;
-            try {
-                profileBitmap = FacebookHelper.getFacebookProfilePicture(params[0].getId());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return profileBitmap;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            super.onPostExecute(bitmap);
-
-            mEditView.setImageBitmap(bitmap);
-            mEditView.post(new Runnable() {
-                @Override
-                public void run() {
-                    mEditView.setMaxWidth(mEditView.getHeight());
-                }
-            });
-
-            Log.d(TAG, "Task completed");
-        }
-    }
 
 }

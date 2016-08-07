@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_gravity="center"
-        android:text="This view will list all of your friends."
+        android:text="Tap a friend to send a message."
         android:textSize="20sp"
         android:padding="10dp"
         android:layout_weight="1"/>

@@ -20,7 +20,7 @@
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/profile_picture"
                 android:minHeight="300dp"
-                android:id="@+id/profile_picture" />
+                android:id="@+id/activity_friend_profile_picture" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -28,7 +28,7 @@
                 android:gravity="center"
                 android:text="Name Here"
                 android:textSize="24sp"
-                android:id="@+id/user_name" />
+                android:id="@+id/activity_friend_user_name" />
 
             <View
                 android:layout_width="match_parent"
@@ -44,12 +44,14 @@
                 <TableRow>
 
                     <ImageView
+                        android:id="@+id/nickname"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:contentDescription="@string/nickname" />
 
                     <TextView
+                        android:id="@+id/activity_friend_nickname"
                         android:layout_width="0dp"
                         android:layout_height="50dp"
                         android:layout_weight="3"

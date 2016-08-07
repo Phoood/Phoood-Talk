@@ -3,11 +3,11 @@ package com.phooodstudio.phooodtalk.presentation;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.Editable;
 import android.util.Log;
 import android.view.View;
@@ -17,24 +17,14 @@ import android.widget.ListView;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.phooodstudio.phooodtalk.PhooodTalkApp;
 import com.phooodstudio.phooodtalk.R;
 import com.phooodstudio.phooodtalk.database.FirebaseHelper;
 import com.phooodstudio.phooodtalk.model.Account;
 import com.phooodstudio.phooodtalk.model.Message;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.sql.Time;
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -69,6 +59,14 @@ public class ChatActivity extends AppCompatActivity {
         mOtherPerson = (Account) receivedIntent.getSerializableExtra(FriendsFragment.ACCOUNT_EXTRA);
         if (mOtherPerson == null) {
             Log.e(TAG, "Received account is null");
+        } else{
+            //Change name of support action bar
+            if (getSupportActionBar() == null) {
+                Log.e(TAG, "Support action bar is null");
+            }
+            else{
+                getSupportActionBar().setTitle(mOtherPerson.getName());
+            }
         }
 
         //Create chat ID
@@ -92,6 +90,7 @@ public class ChatActivity extends AppCompatActivity {
         if (listView != null) {
             listView.setAdapter(mAdapter);
         }
+        assert listView != null;
 
         //Set data listener for adapter
         //Note: this currently will get everything
@@ -129,8 +128,6 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 });
 
-        //Change name of support action bar
-        getSupportActionBar().setTitle(mOtherPerson.getName());
     }
 
     /**
@@ -201,6 +198,9 @@ public class ChatActivity extends AppCompatActivity {
             // check if any app can handle taking picture
             if (intent.resolveActivity(getPackageManager()) != null) {
                 startActivityForResult(intent, REQUEST_CODE_CAMERA);
+            }
+            else{
+                Log.e(TAG, "Phone cannot handle taking pictures. Check permissions.");
             }
         }
     }
